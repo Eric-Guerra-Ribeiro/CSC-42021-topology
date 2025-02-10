@@ -12,7 +12,7 @@ def englob_line(set_):
         elif len(set__) == 2:
             return max(set__) - min(set__)
         elif len(set__) == 3:
-            return max(set__) - min(set__)+1786878
+            return max(set__) - min(set__)
         else:
             raise ValueError
     crit = alg.seidel(set_, func, set())

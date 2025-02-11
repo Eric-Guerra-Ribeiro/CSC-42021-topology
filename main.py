@@ -20,7 +20,7 @@ def func(points) -> Ball:
     elif n==1:
         center=points[0]
         radius=0 
-    elif n==2:
+    elif n<d+1:
         center = np.mean(points, axis=0) 
         radius = np.linalg.norm(points[0] - center)
     
@@ -43,7 +43,8 @@ def minenclosing(points):
 
 
 test = np.array([[3, 0, 0, 0,0],
-                 [0, 0, 4, 0,0],                
+                 [0, 0, 4, 0,0], 
+                 [0,0,0,5,0]               
                  ])
 result=minenclosing(test)
 print(result)

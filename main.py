@@ -3,35 +3,50 @@ import numpy as np
 
 import src.algorithms as alg
 
+class Ball:
+    def __init__(self, center, radius):
+        self.center = center
+        self.radius = radius
 
-def func(points):
+def func(points) -> Ball:
     points = np.array(points)  
+    if points.ndim == 1:  
+        points = points.reshape(1, -1) 
     n, d = points.shape  
 
     if points.size==0:
-        return -1
+        center=-1
+        radius=-1
     elif n==1:
-        return 0
+        center=points[0]
+        radius=0 
+    elif n==2:
+        center = np.mean(points, axis=0) 
+        radius = np.linalg.norm(points[0] - center)
+    
     elif n>d+1:
         raise ValueError("There are too many points")
+    else:
+        p1 = points[0]
+        A = 2 * (points[1:] - p1)  
+        b = np.sum(points[1:]**2, axis=1) - np.sum(p1**2)  
 
-    p1 = points[0]
-    A = 2 * (points[1:] - p1)  
-    b = np.sum(points[1:]**2, axis=1) - np.sum(p1**2)  
-
-
-    center = np.linalg.lstsq(A, b, rcond=None)[0] 
-    radius = np.linalg.norm(points[0] - center)
-
-    return radius
+        center = np.linalg.lstsq(A, b, rcond=None)[0]
+        radius = np.linalg.norm(points[0] - center)
+    
+    return Ball(center,radius)
  
+def minenclosing(points):
 
-test = np.array([[1, 0, 0, 0],
-                 [0, 1, 0, 0],
-                 [0, 0, 1, 0],
+    return alg.seidel(func,set(),points).radius
+   
+
+
+test = np.array([[3, 0, 0, 0,0],
+                 [0, 0, 4, 0,0],                
                  ])
-
-print(func(test))
+result=minenclosing(test)
+print(result)
 
 # sample = np.random.randint(low=-100,high=100,size=100,dtype=int)
 # min_val = np.min(sample)

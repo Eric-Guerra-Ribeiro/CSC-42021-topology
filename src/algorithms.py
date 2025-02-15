@@ -78,7 +78,7 @@ def min_enclosing_ball_aux(
 
     # Choosen point is not in the ball created without it
     # So it must be in the boundary of the real minimal ball
-    if not ball.is_in(points_mapping[interior_set[-1]]):
+    if not ball.is_in(points_mapping[choosen_point]):
         ball, new_boundary_set = min_enclosing_ball_aux(interior_set[:-1], calculate_ball, boundary_set + [choosen_point], dimension, points_mapping)
 
     return ball, new_boundary_set

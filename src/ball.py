@@ -16,7 +16,9 @@ class Ball:
     def is_in(self, point:np.ndarray[float]) -> bool:
         if self.center is None or self.radius is None:
             return False
-        return LIN.vector_norm(point - self.center, ord=2) <= self.radius
+        if point is None:
+            return True
+        return LIN.vector_norm(point - self.center, ord=2) <= self.radius + EPSILON_PRECISION
 
     def are_the_same(self, ball:Ball):
         # We consider non-existing balls as unique

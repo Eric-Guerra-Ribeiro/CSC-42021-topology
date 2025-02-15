@@ -1,4 +1,6 @@
-from src.tests import one_dimentional_cech_complex_test
+import numpy as np
+
+from src.tests import n_dimentional_cech_complex_test
 
 if __name__ == "__main__":
-    one_dimentional_cech_complex_test()
+    n_dimentional_cech_complex_test()

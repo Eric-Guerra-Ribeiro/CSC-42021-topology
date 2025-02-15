@@ -1,3 +1,6 @@
+import math
+import random
+
 import numpy as np
 import numpy.linalg as LIN
 
@@ -6,13 +9,6 @@ from src.ball import Ball
 
 
 def n_dimentional_cech_complex_test():
-
-    def func(points_id:list[int], points:np.ndarray[np.ndarray[float]]) -> tuple[Ball, bool]:
-        _, d = points.shape
-        selected_points = np.fromiter((points[point_id] for point_id in points_id), dtype=np.dtype((float, d)))
-        ball = alg.calculate_ball(selected_points)
-        return ball
-
     # 1) For a single point, the center is the point itself, with a radius of 0.
 
     point = np.array([3.14, -0.5, 2])
@@ -73,3 +69,28 @@ def n_dimentional_cech_complex_test():
     ball5, critical_set5 = alg.min_enclosing_ball(test5)
 
     assert ball5.are_the_same(solution5_ball)
+
+    # 6) You can then experiment with adding more points inside the sphere and changing the order of the points, which should not change the MEB.
+
+    test6 = np.array([[-1, -3, 4],
+                     [-1, 4, -3],
+                     [-1, -4, -3],
+                     [5, 0, 1]])
+
+    n, d = test6.shape
+
+    N = 100
+
+    new_points = np.fromiter(
+        ([r*math.sin(theta)*math.cos(phi), r*math.sin(theta)*math.sin(phi), r*math.cos(theta)]
+         for r, theta, phi
+         in zip(np.random.uniform(0, 4, N - n), np.random.uniform(0, np.pi, N - n), np.random.uniform(-np.pi, np.pi, N - n)))
+        , dtype=np.dtype((float, d))
+    )
+
+    test6_full = np.concatenate([test6, new_points], axis=0)
+
+    ball6, critical_set6 = alg.min_enclosing_ball(test6_full)
+
+    assert ball6.are_the_same(solution5_ball)
+

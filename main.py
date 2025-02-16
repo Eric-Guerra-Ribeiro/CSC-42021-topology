@@ -1,4 +1,5 @@
-from src.tests import n_dimentional_cech_complex_test, enumerate_simplexes_ck_test, enumerate_simplexes_ckl_test, simplex_in_alpha_complex_test
+from src.tests import (n_dimentional_cech_complex_test, enumerate_simplexes_ck_test,
+                       enumerate_simplexes_ckl_test, simplex_in_alpha_complex_test, enumerate_simplexes_ckl_alpha_test)
 
 if __name__ == "__main__":
     # Task 1
@@ -21,4 +22,9 @@ if __name__ == "__main__":
     # Task 4
     print("Task 4) Test if simplex is in the alpha-complex")
     simplex_in_alpha_complex_test()
+    print()
+
+    # Task 5
+    print("Task 5) Enumerate Ckl simplex in alpha-complex (k=3, l=0.8)")
+    enumerate_simplexes_ckl_alpha_test()
     print()

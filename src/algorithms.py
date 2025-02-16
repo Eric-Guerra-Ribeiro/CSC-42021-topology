@@ -181,3 +181,42 @@ def simplex_in_alpha_complex(simplex:set[int], points:np.ndarray[np.ndarray[floa
     ball, _ = min_non_enclosing_ball_aux(exterior, lambda points_id: func(points_id, points), list(simplex), d, points)
 
     return ball.exists(), ball
+
+
+def enumerate_simplexes_ckl_alpha_aux(
+        points:np.ndarray[np.ndarray[float]], max_dim:int, choosen_points:set[int], depth:int, enumeration:list[str], filtration:float, has_been_added:bool
+    ):
+
+    def add_without_none(simplex):
+        """
+        Adds the simplexes to the enumeration if they are not empty (None)
+        """
+        if simplex is None:
+            return
+        enumeration.append(simplex)
+
+    n, d = points.shape
+
+    # Reached end of recursion or excedeed dimension
+    if len(choosen_points) > max_dim or depth > n:
+        return
+
+    # If we have choosen some points, calculate the ball and if it's small enough, add it to the enumeration
+    # If it's too big, prune recursion branch
+    # Hasn't been added to guarantee unicity
+    if choosen_points and not has_been_added:
+        is_simplex, ball = simplex_in_alpha_complex(choosen_points, points)
+        if not is_simplex or ball.radius > filtration:
+            return
+        add_without_none(f"({' '.join((str(point) for point in sorted(choosen_points)))}) -> [{ball.radius:.5f}]")
+
+    # Continue while adding next point to simplex
+    add_without_none(enumerate_simplexes_ckl_alpha_aux(points, max_dim, choosen_points | {depth}, depth + 1, enumeration, filtration, False))
+    # Continue without adding next point to simplex
+    add_without_none(enumerate_simplexes_ckl_alpha_aux(points, max_dim, choosen_points, depth + 1, enumeration, filtration, True))
+
+
+def enumerate_simplexes_ckl_alpha(points:np.ndarray[np.ndarray[float]], max_dim:int, filtration:float) -> list[str]:
+    enumeration = list()
+    enumerate_simplexes_ckl_alpha_aux(points, max_dim, set(), 0, enumeration, filtration, False)
+    return enumeration

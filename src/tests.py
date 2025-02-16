@@ -153,3 +153,20 @@ def simplex_in_alpha_complex_test():
     print(result_str(is_in_complex1, ball1))
 
 
+def enumerate_simplexes_ckl_alpha_test():
+    
+    # This example should look similar to Figure 5,
+    # but with a new point added in the third dimension just over the first one
+    # We start at the top left corner and go on clock-wise
+    test = np.array([
+        [0, 0, 0],
+        [0.95, 0, 0],
+        [0.95, -0.95, 0],
+        [1.85, -1.67, 0],
+        [1.05, -2.83, 0],
+        [-0.17, -2.07, 0],
+        [-0.17, -1.1, 0],
+        [0, 0, 1]
+    ])
+
+    print("\n".join(sorted(alg.enumerate_simplexes_ckl_alpha(test, 3, 0.8), key=len)))

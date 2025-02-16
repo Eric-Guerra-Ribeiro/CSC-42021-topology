@@ -126,3 +126,47 @@ def enumerate_simplexes_ckl(points:np.ndarray[np.ndarray[float]], k:int, l:float
     enumeration = list()
     enumerate_simplexes_ckl_aux(points, k, [], 0, enumeration, l)
     return enumeration
+
+
+def min_non_enclosing_ball_aux(
+        exterior_set:list[int], calculate_ball:Callable, boundary_set:list[int], dimension:int, points_mapping:np.ndarray[np.ndarray[float]]
+    ) -> tuple[Ball, list[int]]:
+    # If we have too many points and the problem is over determined,
+    # The simplex doesn't belong to the alpha-complex
+    if len(boundary_set) > dimension + 1:
+        return Ball(), []
+    # Exterior set is empty, return ball made by the boundary set
+    if not exterior_set:
+        ball = calculate_ball(boundary_set)
+        return ball, boundary_set
+
+    # Choose a random point in the exterior
+    choosen_point_idx = random.randint(0, len(exterior_set) - 1)
+    choosen_point = exterior_set[choosen_point_idx]
+    exterior_set[choosen_point_idx], exterior_set[-1] = exterior_set[-1], choosen_point
+
+    # Create ball without this point explicity
+    ball, new_boundary_set = min_non_enclosing_ball_aux(exterior_set[:-1], calculate_ball, boundary_set, dimension, points_mapping)
+
+    # Choosen point is inside in the ball created without it
+    # So it must be in the boundary of the real maximal non-enclosing ball
+    if ball.is_in(points_mapping[choosen_point]) and not ball.is_in_border(points_mapping[choosen_point]):
+        ball, new_boundary_set = min_non_enclosing_ball_aux(exterior_set[:-1], calculate_ball, boundary_set + [choosen_point], dimension, points_mapping)
+
+    return ball, new_boundary_set
+
+
+
+def simplex_in_alpha_complex(simplex:set[int], points:np.ndarray[np.ndarray[float]]) -> tuple[bool, float]:
+    def func(points_id:list[int], points:np.ndarray[np.ndarray[float]]) -> tuple[bool, Ball]:
+        _, d = points.shape
+        selected_points = np.fromiter((points[point_id] for point_id in points_id), dtype=np.dtype((float, d)))
+        ball = calculate_ball(selected_points)
+        return ball
+
+    n, d = points.shape
+
+    exterior = [i for i in range(n) if i not in simplex]
+    ball, _ = min_non_enclosing_ball_aux(exterior, lambda points_id: func(points_id, points), list(simplex), d, points)
+
+    return ball.exists(), ball

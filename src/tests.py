@@ -114,3 +114,42 @@ def enumerate_simplexes_ckl_test():
 
     print("\n".join(sorted(alg.enumerate_simplexes_ckl(test, 4, 4), key=len)))
 
+
+def simplex_in_alpha_complex_test():
+    def np_array_as_coordinate_str(array:np.ndarray[float]) -> str:
+        return str(f"{tuple(float(el) for el in array)}")
+
+    def result_str(is_in_complex: bool, ball: Ball):
+        if is_in_complex:
+            return f"In complex with a filtration value of {ball.radius}."
+        return "Not in complex"
+
+    points = np.array([
+        [0, 5, 0],
+        [3, 4, 0],
+        [-3, 4, 0],
+        [0, 0, 4],
+        [0, 0, -4]
+    ])
+
+    simplex = {0, 1, 2}
+
+    print("In all these tests the simplex analyzed is:")
+    print(f"{[np_array_as_coordinate_str(points[i]) for i in simplex]}".replace("'", ""))
+    print()
+    print("For alpha-complex:")
+    print(f"{[np_array_as_coordinate_str(point) for point in points[:-2]]}".replace("'", ""))
+    is_in_complex1, ball1= alg.simplex_in_alpha_complex(simplex, points[:-2])
+    print(result_str(is_in_complex1, ball1))
+    print()
+    print("For alpha-complex:")
+    print(f"{[np_array_as_coordinate_str(point) for point in points[:-1]]}".replace("'", ""))
+    is_in_complex1, ball1= alg.simplex_in_alpha_complex(simplex, points[:-1])
+    print(result_str(is_in_complex1, ball1))
+    print()
+    print("For alpha-complex:")
+    print(f"{[np_array_as_coordinate_str(point) for point in points]}".replace("'", ""))
+    is_in_complex1, ball1= alg.simplex_in_alpha_complex(simplex, points)
+    print(result_str(is_in_complex1, ball1))
+
+

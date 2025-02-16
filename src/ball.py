@@ -20,6 +20,13 @@ class Ball:
             return True
         return LIN.vector_norm(point - self.center, ord=2) <= self.radius + EPSILON_PRECISION
 
+    def is_in_border(self, point:np.ndarray[float]) -> bool:
+        if self.center is None or self.radius is None:
+            return False
+        if point is None:
+            return True
+        return np.abs(self.radius - LIN.vector_norm(point - self.center, ord=2)) < EPSILON_PRECISION
+
     def are_the_same(self, ball:Ball):
         # We consider non-existing balls as unique
         if self.center is None or ball.center is None:
@@ -29,6 +36,9 @@ class Ball:
 
         return (math.fabs(ball.radius - self.radius) < EPSILON_PRECISION
                 and LIN.vector_norm(ball.center - self.center) < EPSILON_PRECISION)
+
+    def exists(self):
+        return self.center is not None or self.radius is not None
 
     def __str__(self) -> str:
         return f"(({self.center}) {self.radius})"

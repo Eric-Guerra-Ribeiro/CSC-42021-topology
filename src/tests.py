@@ -6,6 +6,7 @@ import numpy.linalg as LIN
 
 import src.algorithms as alg
 from src.ball import Ball
+from src.graphics import plot3d, convert_enumeration_to_simplex
 
 
 def n_dimentional_cech_complex_test():
@@ -102,20 +103,24 @@ def enumerate_simplexes_ck_test():
                      [-1, -4, -3],
                      [-1, 4, -3]])
 
-    print("\n".join(sorted(alg.enumerate_simplexes_ck(test, 4), key=len)))
+    enumeration = alg.enumerate_simplexes_ck(test, 4)
+    print("\n".join(sorted(enumeration, key=len)))
+    plot3d([convert_enumeration_to_simplex(simplex_str) for simplex_str in enumeration], test, "$C^k$ Cech-complex", "ck")
 
 
-def enumerate_simplexes_ckl_test():
+def enumerate_simplexes_ckl_test(): 
     
     test = np.array([[5, 0, 1],
                      [-1, -3, 4],
                      [-1, -4, -3],
                      [-1, 4, -3]])
 
-    print("\n".join(sorted(alg.enumerate_simplexes_ckl(test, 4, 4), key=len)))
+    enumeration = alg.enumerate_simplexes_ckl(test, 4, 4)
+    print("\n".join(sorted(enumeration, key=len)))
+    plot3d([convert_enumeration_to_simplex(simplex_str) for simplex_str in enumeration], test, "$C^k_l$ Cech-complex", "ckl")
 
 
-def simplex_in_alpha_complex_test():
+def simplex_in_alpha_complex_test(): 
     def np_array_as_coordinate_str(array:np.ndarray[float]) -> str:
         return str(f"{tuple(float(el) for el in array)}")
 
@@ -169,4 +174,6 @@ def enumerate_simplexes_ckl_alpha_test():
         [0, 0, 1]
     ])
 
-    print("\n".join(sorted(alg.enumerate_simplexes_ckl_alpha(test, 3, 0.8), key=len)))
+    enumeration = alg.enumerate_simplexes_ckl_alpha(test, 3, 0.8)
+    print("\n".join(sorted(enumeration, key=len)))
+    plot3d([convert_enumeration_to_simplex(simplex_str) for simplex_str in enumeration], test, "$C^k_l$ $\\alpha$-complex", "alpha")

@@ -31,34 +31,6 @@ def calculate_ball(points:np.ndarray[np.ndarray[float]]) -> Ball:
         return Ball(center, radius)
 
 
-def random_permutation(list_:list[int]) -> list[int]:
-    size = len(list_)
-    for i in range(size - 1):
-        j = random.randint(i, size - 1)
-        list_[i], list_[j] = list_[j], list_[i]
-    return list_
-
-
-# TODO Maybe delete this, I don't think it works
-def seidel(global_set:list[int], func:Callable, boundary_set:list[int], dimension:int) -> tuple[Ball, list[int]]:
-    interior_set = []
-    critical_set = boundary_set
-
-    # Global set is empty, return ball made by the boundary set
-    # Or we have enough points in the boundary set for the problem to be determined
-    if not global_set or len(boundary_set) == dimension:
-        ball_from_critical_set, _ = func(critical_set, None)
-        return ball_from_critical_set, critical_set
-
-    for i in random_permutation(global_set):
-        ball_from_critical_set, critical_set_has_changed = func(critical_set, i)
-        if critical_set_has_changed:
-            ball_from_critical_set, critical_set = seidel(interior_set, func, boundary_set + [i], dimension)
-        interior_set.append(i)
-
-    return ball_from_critical_set, critical_set
-
-
 def min_enclosing_ball_aux(
         interior_set:list[int], calculate_ball:Callable, boundary_set:list[int], dimension:int, points_mapping:np.ndarray[np.ndarray[float]]
     ) -> tuple[Ball, list[int]]:

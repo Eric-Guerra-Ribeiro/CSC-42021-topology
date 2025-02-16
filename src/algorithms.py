@@ -160,7 +160,7 @@ def min_non_enclosing_ball_aux(
     ball, new_boundary_set = min_non_enclosing_ball_aux(exterior_set[:-1], calculate_ball, boundary_set, dimension, points_mapping)
 
     # Choosen point is inside in the ball created without it
-    # So it must be in the boundary of the real maximal non-enclosing ball
+    # So it must be in the boundary of the real minimal non-enclosing ball
     if ball.is_in(points_mapping[choosen_point]) and not ball.is_in_border(points_mapping[choosen_point]):
         ball, new_boundary_set = min_non_enclosing_ball_aux(exterior_set[:-1], calculate_ball, boundary_set + [choosen_point], dimension, points_mapping)
 

@@ -94,3 +94,14 @@ def n_dimentional_cech_complex_test():
 
     assert ball6.are_the_same(solution5_ball)
 
+
+
+def enumerate_simplexes_ck_test():
+    
+    test = np.array([[5, 0, 1],
+                     [-1, -3, 4],
+                     [-1, -4, -3],
+                     [-1, 4, -3]])
+
+    print("\n".join(sorted(alg.enumerate_simplexes_ck_naive(test, 4), key=len)))
+

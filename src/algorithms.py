@@ -92,3 +92,29 @@ def min_enclosing_ball(points:np.ndarray[np.ndarray[float]]) -> tuple[Ball, list
         return ball
     n, d = points.shape
     return min_enclosing_ball_aux(list(range(n)), lambda points_id: func(points_id, points), [], d, points)
+
+
+def enumerate_simplexes_ck_naive_aux(points:np.ndarray[np.ndarray[float]], k:int, choosen_points:list[int], depth:int, enumeration:list[str]):
+
+    def add_without_none(element):
+        if element is None:
+            return
+        enumeration.append(element)
+
+    n, d = points.shape
+
+    if len(choosen_points) > k or depth > n:
+        return
+
+    if depth == n and choosen_points:
+        ball, _ = min_enclosing_ball(np.fromiter((points[point_id] for point_id in choosen_points), dtype=np.dtype((float, d))))
+        add_without_none(f"({' '.join((str(point) for point in sorted(choosen_points)))}) -> [{ball.radius:.5f}]")
+
+    add_without_none(enumerate_simplexes_ck_naive_aux(points, k, choosen_points + [depth], depth + 1, enumeration))
+    add_without_none(enumerate_simplexes_ck_naive_aux(points, k, choosen_points, depth + 1, enumeration))
+
+
+def enumerate_simplexes_ck_naive(points:np.ndarray[np.ndarray[float]], k:int) -> list[str]:
+    enumeration = list()
+    enumerate_simplexes_ck_naive_aux(points, k, [], 0, enumeration)
+    return enumeration

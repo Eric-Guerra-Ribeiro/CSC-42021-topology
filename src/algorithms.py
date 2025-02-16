@@ -94,37 +94,48 @@ def min_enclosing_ball(points:np.ndarray[np.ndarray[float]]) -> tuple[Ball, list
     return min_enclosing_ball_aux(list(range(n)), lambda points_id: func(points_id, points), [], d, points)
 
 
-def enumerate_simplexes_ckl_aux(points:np.ndarray[np.ndarray[float]], max_dim:int, choosen_points:list[int], depth:int, enumeration:list[str], filtration:float):
+def enumerate_simplexes_ckl_aux(
+        points:np.ndarray[np.ndarray[float]], max_dim:int, choosen_points:list[int], depth:int, enumeration:list[str], filtration:float, has_been_added:bool
+    ):
 
-    def add_without_none(element):
-        if element is None:
+    def add_without_none(simplex):
+        """
+        Adds the simplexes to the enumeration if they are not empty (None)
+        """
+        if simplex is None:
             return
-        enumeration.append(element)
+        enumeration.append(simplex)
 
     n, d = points.shape
 
+    # Reached end of recursion or excedeed dimension
     if len(choosen_points) > max_dim or depth > n:
         return
 
-    if depth == n and choosen_points:
+    # If we have choosen some points, calculate the ball and if it's small enough, add it to the enumeration
+    # If it's too big, prune recursion branch
+    # Hasn't been added to guarantee unicity
+    if choosen_points and not has_been_added:
         ball, _ = min_enclosing_ball(np.fromiter((points[point_id] for point_id in choosen_points), dtype=np.dtype((float, d))))
         if ball.radius > filtration:
             return
         add_without_none(f"({' '.join((str(point) for point in sorted(choosen_points)))}) -> [{ball.radius:.5f}]")
 
-    add_without_none(enumerate_simplexes_ckl_aux(points, max_dim, choosen_points + [depth], depth + 1, enumeration, filtration))
-    add_without_none(enumerate_simplexes_ckl_aux(points, max_dim, choosen_points, depth + 1, enumeration, filtration))
+    # Continue while adding next point to simplex
+    add_without_none(enumerate_simplexes_ckl_aux(points, max_dim, choosen_points + [depth], depth + 1, enumeration, filtration, False))
+    # Continue without adding next point to simplex
+    add_without_none(enumerate_simplexes_ckl_aux(points, max_dim, choosen_points, depth + 1, enumeration, filtration, True))
 
 
 def enumerate_simplexes_ck(points:np.ndarray[np.ndarray[float]], max_dim:int) -> list[str]:
     enumeration = list()
-    enumerate_simplexes_ckl_aux(points, max_dim, [], 0, enumeration, np.inf)
+    enumerate_simplexes_ckl_aux(points, max_dim, [], 0, enumeration, np.inf, False)
     return enumeration
 
 
-def enumerate_simplexes_ckl(points:np.ndarray[np.ndarray[float]], k:int, l:float) -> list[str]:
+def enumerate_simplexes_ckl(points:np.ndarray[np.ndarray[float]], max_dim:int, filtration:float) -> list[str]:
     enumeration = list()
-    enumerate_simplexes_ckl_aux(points, k, [], 0, enumeration, l)
+    enumerate_simplexes_ckl_aux(points, max_dim, [], 0, enumeration, filtration, False)
     return enumeration
 
 
